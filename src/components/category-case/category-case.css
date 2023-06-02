@@ -1,0 +1,6 @@
+.case {
+  div:nth-child(4),
+  div:nth-child(5) {
+    @apply md:h-[380px];
+  }
+}

@@ -1,0 +1,6 @@
+.category {
+  &:nth-child(4),
+  &:nth-child(5) {
+    @apply h-[390px];
+  }
+}
