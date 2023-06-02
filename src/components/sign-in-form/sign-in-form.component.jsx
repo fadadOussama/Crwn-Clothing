@@ -19,8 +19,7 @@ export default function SignIn() {
     e.preventDefault();
     // try & catch to test the auth info
     try {
-      const { user } = await signInAuthWithEmailAndPassword(email, password);
-      console.log(user);
+      await signInAuthWithEmailAndPassword(email, password);
       // reset inputs
       handleInputReset();
     } catch (error) {
