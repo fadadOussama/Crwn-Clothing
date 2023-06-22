@@ -7,7 +7,7 @@ export default function PaymentForm() {
   const stripe = useStripe();
   const elements = useElements();
 
-  const { displayName } = useSelector((state) => state.user.data);
+  const user = useSelector((state) => state.user.data);
   const { product } = useSelector((state) => state);
 
   const paymentHandler = async (e) => {
@@ -31,7 +31,7 @@ export default function PaymentForm() {
       payment_method: {
         card: elements.getElement(CardElement),
         billing_details: {
-          name: displayName,
+          name: user?.displayName === null ? "Guest" : user?.displayName,
         },
       },
     });
