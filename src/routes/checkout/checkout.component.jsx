@@ -1,36 +1,48 @@
-import React, { useContext } from "react";
-import { productContext } from "../../components/context/product.context";
+import React from "react";
 import { TrashIcon, ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { calc } from "../../store/counter/counterSlice";
+import { setData } from "../../store/product/productSlice";
+import PaymentForm from "../../components/payment-form/payment-form.component";
+
+export let countTotal = (item) => {
+  let count = 0;
+  item.map((productItem) => {
+    count += productItem.price * productItem.quantity;
+  });
+  return count;
+};
 
 export default function Checkout() {
-  let { productVal, setProductVal, productCount, setProductCount } = useContext(productContext);
+  const dispatch = useDispatch();
+  const { counter, product } = useSelector((state) => state);
 
-  let countTotal = () => {
-    let count = 0;
-    productVal.map((productItem) => {
-      count += productItem.price * productItem.quantity;
-    });
-    return count;
-  };
-
-  let total = countTotal();
+  let total = countTotal(product);
 
   const handleDeleteProduct = (e) => {
+    if (product.length === 1) {
+      Cookies.set("cart", JSON.stringify([]), { expires: 7 });
+      Cookies.set("counter", JSON.stringify(0), { expires: 7 });
+    }
+
     const productId = e.currentTarget.getAttribute("data-value");
 
-    setProductVal(
-      productVal.filter((productItem) => {
-        if (productItem.id === +productId) {
-          if (productItem.quantity !== 1) {
-            setProductCount(productCount - productItem.quantity);
-          } else {
-            setProductCount(productCount - 1);
+    dispatch(
+      setData(
+        product.filter((productItem) => {
+          if (productItem.id === +productId) {
+            if (productItem.quantity !== 1) {
+              dispatch(calc(counter - productItem.quantity));
+            } else {
+              dispatch(calc(counter - 1));
+            }
           }
-        }
-        if (productItem.id !== +productId) {
-          return productItem;
-        }
-      })
+          if (productItem.id !== +productId) {
+            return productItem;
+          }
+        })
+      )
     );
   };
 
@@ -40,7 +52,7 @@ export default function Checkout() {
     let productValCopy = [];
     let quantityCount = 1;
 
-    productVal.map((productItem) => {
+    product.map((productItem) => {
       if (productItem.id === +productId) {
         quantityProduct = { ...productItem, quantity: productItem.quantity + 1 };
         productValCopy.push(quantityProduct);
@@ -50,8 +62,8 @@ export default function Checkout() {
       quantityCount += productItem.quantity;
     });
 
-    setProductVal(productValCopy);
-    setProductCount(quantityCount);
+    dispatch(setData(productValCopy));
+    dispatch(calc(quantityCount));
   };
 
   const decreaseQuantity = (e) => {
@@ -60,7 +72,7 @@ export default function Checkout() {
     let productValCopy = [];
     let quantityCount = 1;
 
-    productVal.map((productItem) => {
+    product.map((productItem) => {
       if (productItem.id === +productId) {
         quantityProduct = { ...productItem, quantity: productItem.quantity - 1 };
         productValCopy.push(quantityProduct);
@@ -71,16 +83,16 @@ export default function Checkout() {
       quantityCount -= productItem.quantity;
     });
 
-    setProductVal(productValCopy);
-    setProductCount(quantityCount * -1);
+    dispatch(setData(productValCopy));
+    dispatch(calc(quantityCount * -1));
   };
 
   return (
     <>
-      {productVal.length === 0 ? (
+      {product.length === 0 ? (
         <p>No items to showcase</p>
       ) : (
-        <div>
+        <div className="overflow-x-auto">
           <table width="1000px" className="mx-auto">
             <thead className="">
               <tr>
@@ -92,7 +104,7 @@ export default function Checkout() {
               </tr>
             </thead>
             <tbody>
-              {productVal.map((product) => {
+              {product.map((product) => {
                 const { imageUrl, name, quantity, price, id } = product;
                 return (
                   <tr key={id} className="text-center border-t border-b border-black">
@@ -121,7 +133,8 @@ export default function Checkout() {
               })}
             </tbody>
           </table>
-          <div className="w-[1000px] text-right m-auto mt-10 text-[30px] lining-nums">TOTAL : {total}$</div>
+          <div className="w-[1000px] text-right m-auto mt-10 text-[30px] lining-nums mb-12">TOTAL : {total}$</div>
+          <PaymentForm />
         </div>
       )}
     </>

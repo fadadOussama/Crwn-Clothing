@@ -1,19 +1,18 @@
-import React, { Fragment, useContext } from "react";
-import { shopContext } from "../../components/context/shop.context";
+import React, { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import ShopCard from "../../components/shop-card/shop-card.component";
+import { useSelector } from "react-redux";
 
 function CategoryPreview() {
-  const { shopVal } = useContext(shopContext);
+  const { data } = useSelector((state) => state.shop);
   const { category } = useParams();
-  console.log(category);
 
   return (
     <div className="mx-[10px]">
       <Fragment>
         <span className="text-[30px] font-bold my-10 text-center block">{category.toUpperCase()}</span>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 gap-x-6 gap-y-10">
-          {shopVal[category]?.map((product) => (
+          {data[category]?.map((product) => (
             <ShopCard key={product.id} product={product} />
           ))}
         </div>

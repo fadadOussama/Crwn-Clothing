@@ -28,7 +28,7 @@ button,
 
 tr {
   td,
-  th {  
+  th {
     @apply p-5;
   }
 }

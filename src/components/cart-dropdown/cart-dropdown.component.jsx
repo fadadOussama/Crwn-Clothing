@@ -1,23 +1,38 @@
-import React, { useContext } from "react";
-import { cartContext } from "../context/cart.context";
-import { productContext } from "../context/product.context";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { calc } from "../../store/counter/counterSlice";
+import { setData } from "../../store/product/productSlice";
 
 export default function CartDropdown() {
-  const { isCartOpen } = useContext(cartContext);
-  const { productVal } = useContext(productContext);
+  const dispatch = useDispatch();
+  const { cart, product, counter } = useSelector((state) => state);
+
+  if (product.length !== 0) {
+    Cookies.set("cart", JSON.stringify(product), { expires: 7 });
+    Cookies.set("counter", JSON.stringify(counter), { expires: 7 });
+  }
+
+  useEffect(() => {
+    if (Cookies.get("counter") !== undefined && Cookies.get("cart") !== undefined) {
+      console.log();
+      dispatch(setData(JSON.parse(Cookies.get("cart"))));
+      dispatch(calc(JSON.parse(Cookies.get("counter"))));
+    }
+  }, []);
 
   return (
     <div
       className={`${
-        isCartOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        cart ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       } mt-[300px] z-40 absolute -right-[10px] -top-[220px] flex gap-x-4 flex-col border-2 border-black w-[240px] h-[340px] bg-white p-5 transition duration-200`}
     >
       <div className="overflow-x-auto h-[240px]">
-        {productVal.length === 0 ? (
+        {product.length === 0 ? (
           <p className="text-center">no item in the cart</p>
         ) : (
-          productVal.map(({ name, id, quantity, imageUrl, price }) => (
+          product.map(({ name, id, quantity, imageUrl, price }) => (
             <div key={id} className="flex gap-x-4 items-center mb-4">
               <img src={imageUrl} alt="product-img" className="w-[80px]" />
               <div>

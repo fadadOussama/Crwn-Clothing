@@ -1,26 +1,26 @@
 /* eslint-disable react/prop-types */
-import React, { useContext } from "react";
-import { productContext } from "../context/product.context";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { calc } from "../../store/counter/counterSlice";
+import { setData, setQuantity } from "../../store/product/productSlice";
 
 export default function ShopCard({ product }) {
   const { id, name, imageUrl, price } = product;
-  const { productVal, setProductVal, setProductCount } = useContext(productContext);
+  const dispatch = useDispatch();
+  const { counter } = useSelector((state) => state);
+  const storeProduct = useSelector((state) => state.product);
 
   const handleProduct = () => {
     const uuid = crypto.randomUUID();
-    const existingProoduct = productVal.find((productItem) => productItem.id === id);
+    const existingProoduct = storeProduct.find((productItem) => productItem.id === id);
 
     if (!existingProoduct) {
-      setProductVal([...productVal, { ...product, quantity: 1, uuid: uuid }]);
+      dispatch(setData([...storeProduct, { ...product, quantity: 1, uuid: uuid }]));
     } else {
-      productVal.map((productItem) => {
-        if (productItem.id === id) {
-          productItem.quantity += 1;
-        }
-      });
+      dispatch(setQuantity(id));
     }
 
-    setProductCount((prevVal) => prevVal + 1);
+    dispatch(calc(counter + 1));
   };
 
   return (

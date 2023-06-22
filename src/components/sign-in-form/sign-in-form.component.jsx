@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { createUserDocFromAuth, signInWithGooglePopup, signInAuthWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
+import { signInWithGooglePopup, signInAuthWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
 
 // initial value of the inputs
 const initialFormFields = {
