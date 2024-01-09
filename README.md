@@ -12,4 +12,4 @@
 
 - Toasts Implemented using [React toastify](https://fkhadra.github.io/react-toastify/introduction/) to provide an informative and visually appealing feedback 
 
-+ [**LIVE DEMO**](https://crwn-clothing-eccomerce.netlify.app/)
++ [**LIVE DEMO**](https://crwnfashion-app.netlify.app/)
